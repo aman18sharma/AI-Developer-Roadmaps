@@ -15,81 +15,88 @@ export default function ChatSidebar({
 }: Props) {
   return (
     <aside className="sidebar">
+      {/* Fixed header */}
+      <div className="sidebar-top">
+        <div className="sidebar-brand">
+          <div className="sidebar-logo">B & W</div>
+          <span>Black &amp; White</span>
+        </div>
 
-      <div className="sidebar-brand">
-        <div className="sidebar-logo">✦</div>
-        <span>Black & White</span>
+        <button
+          type="button"
+          className="new-chat-button"
+          onClick={onNewChat}
+        >
+          <span className="new-chat-icon">＋</span>
+          <span>New chat</span>
+          {/* <kbd>Ctrl K</kbd> */}
+        </button>
       </div>
 
-      <button
-        type="button"
-        className="new-chat-button"
-        onClick={onNewChat}
-      >
-        <span className="new-chat-icon">＋</span>
-        <span>New chat</span>
-        {/* <kbd>Ctrl K</kbd> */}
-      </button>
-
+      {/* Only this section scrolls */}
       <div className="sidebar-scroll">
-
         <div className="sidebar-section">
           <div className="section-label">
             Recent
           </div>
 
-          {conversations.length === 0 && (
+          {conversations.length === 0 ? (
             <div className="empty-history">
-              Your conversations
-              will appear here.
+              Your conversations will appear here.
             </div>
+          ) : (
+            conversations.map((conversation) => {
+              const active =
+                conversation.id ===
+                activeConversationId;
+
+              return (
+                <button
+                  type="button"
+                  key={conversation.id}
+                  className={`history-item ${active ? "history-active" : ""
+                    }`}
+                  onClick={() =>
+                    onSelect(conversation.id)
+                  }
+                  title={conversation.title}
+                >
+                  <span className="history-dot">
+                    {active ? "●" : "○"}
+                  </span>
+
+                  <span className="history-title">
+                    {conversation.title}
+                  </span>
+                </button>
+              );
+            })
           )}
-
-          {conversations.map((conversation) => {
-            const active =
-              conversation.id ===
-              activeConversationId;
-
-            return (
-              <button
-                key={conversation.id}
-                className={`history-item ${active ? "history-active" : ""
-                  }`}
-                onClick={() =>
-                  onSelect(conversation.id)
-                }
-              >
-                <span className="history-dot">
-                  {active ? "●" : "○"}
-                </span>
-
-                <span className="history-title">
-                  {conversation.title}
-                </span>
-              </button>
-            );
-          })}
         </div>
-
       </div>
 
-      {/* <div className="sidebar-footer">
-
-        <button className="sidebar-footer-item">
-          <span>⌘</span>
-          Settings
+      {/* Fixed footer */}
+      <div className="sidebar-footer">
+        <button
+          type="button"
+          className="sidebar-footer-item"
+        >
+          <span>⚙</span>
+          <span>Settings</span>
         </button>
 
-        <button className="sidebar-footer-item">
+        <button
+          type="button"
+          className="sidebar-footer-item"
+        >
           <span>◉</span>
-          Profile
+          <span>Profile</span>
         </button>
 
         <div className="version">
-          Black & White v0.1
+          B&W v0.1
         </div>
-
-      </div> */}
+      </div>
     </aside>
   );
 }

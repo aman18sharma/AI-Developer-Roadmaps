@@ -4,6 +4,9 @@
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
     sans-serif;
 
   color: #161616;
@@ -11,6 +14,8 @@
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -26,20 +31,42 @@ body,
 }
 
 body {
+  overflow: hidden;
   background: #f7f7f5;
+  color: #161616;
 }
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
-/* ===============================
-   Application
-================================ */
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #555;
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+  width: 100%;
+  height: 100%;
+}
 
 .app-shell {
+  position: relative;
+
   width: 100%;
   height: 100%;
 
@@ -50,59 +77,85 @@ textarea {
   background: #f7f7f5;
 }
 
-/* ===============================
-   Sidebar
-================================ */
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
 .sidebar {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
   width: 270px;
-  min-width: 270px;
+  height: 100vh;
+  height: 100dvh;
 
   display: flex;
   flex-direction: column;
 
+  overflow: hidden;
+
   background: #f1f1ef;
 
   border-right: 1px solid #e4e4e0;
+
+  z-index: 1000;
+}
+
+.sidebar-top {
+  flex-shrink: 0;
+
+  padding: 16px 12px 12px;
 }
 
 .sidebar-brand {
-  height: 64px;
+  height: 40px;
 
   display: flex;
   align-items: center;
 
   gap: 10px;
 
-  padding: 0 18px;
+  padding: 0 6px;
 
+  color: #171715;
+
+  font-size: 15px;
   font-weight: 700;
+
   letter-spacing: -0.02em;
 }
 
 .sidebar-logo,
 .brand-mark {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 8px;
+  flex-shrink: 0;
 
-  color: white;
+  border-radius: 9px;
 
-  background:
-    linear-gradient(135deg,
-      #111 0%,
-      #363636 100%);
+  background: #111;
+
+  color: #fff;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: -0.04em;
 }
 
 .new-chat-button {
-  margin: 0 12px 16px;
+  width: 100%;
 
-  padding: 12px 13px;
+  margin-top: 12px;
+
+  padding: 11px 12px;
 
   display: flex;
   align-items: center;
@@ -114,20 +167,29 @@ textarea {
 
   background: #fafaf8;
 
+  color: #262623;
+
   cursor: pointer;
 
   transition:
-    background 0.15s,
-    transform 0.15s;
+    background 0.15s ease,
+    transform 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .new-chat-button:hover {
-  background: white;
+  background: #ffffff;
+  border-color: #d1d1cc;
   transform: translateY(-1px);
+}
+
+.new-chat-button:active {
+  transform: translateY(0);
 }
 
 .new-chat-icon {
   font-size: 18px;
+  line-height: 1;
 }
 
 .new-chat-button kbd {
@@ -135,29 +197,57 @@ textarea {
 
   padding: 2px 6px;
 
+  border: 1px solid #e2e2de;
   border-radius: 5px;
 
-  font-size: 10px;
+  background: #ededeb;
 
   color: #8a8a84;
-  background: #ededeb;
+
+  font-size: 10px;
 }
+
+/* =========================================================
+   SIDEBAR SCROLL AREA
+========================================================= */
 
 .sidebar-scroll {
   flex: 1;
+  min-height: 0;
 
   overflow-y: auto;
+  overflow-x: hidden;
 
-  padding: 0 9px;
+  padding: 4px 9px 12px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #d0d0cb transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #d0d0cb;
+  border-radius: 999px;
+}
+
+.sidebar-section {
+  width: 100%;
 }
 
 .section-label {
-  padding: 8px 10px;
+  padding: 10px 10px 7px;
+
+  color: #8c8c86;
 
   font-size: 11px;
   font-weight: 700;
-
-  color: #8c8c86;
 
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -165,13 +255,14 @@ textarea {
 
 .history-item {
   width: 100%;
+  min-width: 0;
 
   display: flex;
   align-items: center;
 
   gap: 9px;
 
-  padding: 10px 10px;
+  padding: 10px;
 
   border: 0;
   border-radius: 9px;
@@ -183,19 +274,31 @@ textarea {
   text-align: left;
 
   cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .history-item:hover {
   background: #e7e7e3;
 }
 
-.history-active {
-  background: #e3e3df !important;
+.history-item.history-active {
+  background: #e2e2de;
+  color: #171715;
 }
 
 .history-dot {
+  width: 10px;
+
+  flex-shrink: 0;
+
+  color: #868680;
+
   font-size: 8px;
-  color: #85857e;
+
+  text-align: center;
 }
 
 .history-title {
@@ -204,7 +307,6 @@ textarea {
   overflow: hidden;
 
   white-space: nowrap;
-
   text-overflow: ellipsis;
 
   font-size: 13px;
@@ -215,15 +317,22 @@ textarea {
 
   color: #91918b;
 
-  line-height: 1.5;
-
   font-size: 12px;
+  line-height: 1.5;
 }
 
+/* =========================================================
+   SIDEBAR FOOTER
+========================================================= */
+
 .sidebar-footer {
-  padding: 12px;
+  flex-shrink: 0;
+
+  padding: 10px 12px 12px;
 
   border-top: 1px solid #e0e0dc;
+
+  background: #f1f1ef;
 }
 
 .sidebar-footer-item {
@@ -246,6 +355,8 @@ textarea {
   text-align: left;
 
   cursor: pointer;
+
+  transition: background 0.15s ease;
 }
 
 .sidebar-footer-item:hover {
@@ -253,30 +364,50 @@ textarea {
 }
 
 .version {
-  padding:
-    9px 10px 3px;
-
-  font-size: 10px;
+  padding: 8px 10px 2px;
 
   color: #a0a09a;
+
+  font-size: 10px;
 }
 
-/* ===============================
-   Main
-================================ */
+/* =========================================================
+   SIDEBAR BACKDROP
+========================================================= */
+
+.sidebar-backdrop {
+  display: none;
+}
+
+/* =========================================================
+   MAIN PANEL
+========================================================= */
 
 .main-panel {
-  flex: 1;
+  width: calc(100% - 270px);
+  height: 100vh;
+  height: 100dvh;
+
+  margin-left: 270px;
 
   min-width: 0;
-  height: 100%;
 
   display: flex;
   flex-direction: column;
+
+  overflow: hidden;
+
+  background: #f7f7f5;
 }
+
+/* =========================================================
+   TOP BAR
+========================================================= */
 
 .topbar {
   height: 64px;
+
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
@@ -285,6 +416,13 @@ textarea {
   padding: 0 20px;
 
   border-bottom: 1px solid #e8e8e3;
+
+  background: rgba(247, 247, 245, 0.92);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  z-index: 20;
 }
 
 .brand {
@@ -293,12 +431,18 @@ textarea {
 
   gap: 9px;
 
+  color: #171715;
+
+  font-size: 15px;
   font-weight: 700;
+
+  letter-spacing: -0.02em;
 }
 
 .topbar-actions {
   display: flex;
   align-items: center;
+
   gap: 8px;
 }
 
@@ -311,10 +455,14 @@ textarea {
   align-items: center;
   justify-content: center;
 
+  padding: 0;
+
   border: 0;
   border-radius: 9px;
 
   background: transparent;
+
+  color: #555550;
 
   cursor: pointer;
 }
@@ -324,34 +472,69 @@ textarea {
 }
 
 .avatar {
-  color: white;
   background: #1d1d1b;
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .mobile-menu {
   display: none;
 }
 
-/* ===============================
-   Chat
-================================ */
+/* =========================================================
+   CHAT WINDOW
+========================================================= */
 
 .chat-window {
   flex: 1;
 
+  min-width: 0;
   min-height: 0;
 
   display: flex;
   flex-direction: column;
+
+  position: relative;
 }
+
+/* =========================================================
+   CHAT MESSAGES AREA
+========================================================= */
 
 .messages-container {
   flex: 1;
+  min-height: 0;
 
+  overflow-x: hidden;
   overflow-y: auto;
 
-  padding: 28px 30px 150px;
+  padding:
+    28px 30px 170px;
+
+  scroll-behavior: smooth;
+
+  scrollbar-width: thin;
+  scrollbar-color: #d0d0cb transparent;
 }
+
+.messages-container::-webkit-scrollbar {
+  width: 7px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #d0d0cb;
+  border-radius: 999px;
+}
+
+/* =========================================================
+   WELCOME SCREEN
+========================================================= */
 
 .welcome-screen {
   width: min(760px, 100%);
@@ -373,14 +556,17 @@ textarea {
 
   border-radius: 16px;
 
-  font-size: 25px;
-
-  color: white;
-
   background:
     linear-gradient(135deg,
-      #171717,
-      #4b4b4b);
+      #171717 0%,
+      #4b4b4b 100%);
+
+  color: #fff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: -0.05em;
 
   box-shadow:
     0 12px 30px rgba(0, 0, 0, 0.12);
@@ -388,6 +574,8 @@ textarea {
 
 .welcome-screen h1 {
   margin: 0;
+
+  color: #161614;
 
   font-size: clamp(34px,
       5vw,
@@ -399,27 +587,38 @@ textarea {
 }
 
 .welcome-screen p {
-  margin: 18px 0 30px;
+  max-width: 580px;
+
+  margin:
+    18px auto 30px;
 
   color: #878780;
 
   font-size: 15px;
+  line-height: 1.5;
 }
 
+/* =========================================================
+   SUGGESTIONS
+========================================================= */
+
 .suggestions {
+  width: 100%;
+  max-width: 650px;
+
   display: grid;
 
   grid-template-columns:
-    repeat(2, 1fr);
+    repeat(2, minmax(0, 1fr));
 
   gap: 10px;
-
-  max-width: 650px;
 
   margin: 0 auto;
 }
 
 .suggestions button {
+  min-width: 0;
+
   padding: 13px;
 
   display: flex;
@@ -428,13 +627,12 @@ textarea {
   gap: 10px;
 
   border: 1px solid #e2e2de;
-
   border-radius: 12px;
 
   background: rgba(255,
       255,
       255,
-      0.7);
+      0.72);
 
   color: #40403d;
 
@@ -443,28 +641,34 @@ textarea {
   cursor: pointer;
 
   transition:
-    border 0.15s,
-    transform 0.15s,
-    background 0.15s;
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .suggestions button:hover {
-  background: white;
+  background: #fff;
   border-color: #d0d0ca;
+
   transform: translateY(-1px);
 }
 
-/* ===============================
-   Messages
-================================ */
+.suggestions button:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   MESSAGE
+========================================================= */
 
 .message-row {
-  display: flex;
-
   width: min(850px,
       100%);
 
-  margin: 0 auto 22px;
+  display: flex;
+
+  margin:
+    0 auto 22px;
 }
 
 .user-row {
@@ -481,133 +685,447 @@ textarea {
   border-radius: 16px;
 
   line-height: 1.65;
+
+  overflow-wrap: anywhere;
 }
 
 .user-message {
   padding: 12px 15px;
 
-  color: white;
+  border-bottom-right-radius: 5px;
 
   background: #1d1d1b;
 
-  border-bottom-right-radius: 5px;
+  color: #fff;
 }
 
 .assistant-message {
   padding: 3px 0;
 
-  color: #252522;
-
   background: transparent;
+
+  color: #252522;
 }
 
 .message-role {
   margin-bottom: 5px;
 
+  color: #999992;
+
   font-size: 11px;
   font-weight: 700;
-
-  color: #999992;
 
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
+.message-content {
+  min-width: 0;
+
+  font-size: 14px;
+
+  line-height: 1.65;
+}
+
+.message-content p {
+  margin:
+    8px 0;
+}
+
+.message-content p:first-child {
+  margin-top: 0;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
 .message-content h1,
 .message-content h2,
-.message-content h3 {
+.message-content h3,
+.message-content h4 {
+  margin:
+    18px 0 8px;
+
+  color: inherit;
+
+  line-height: 1.3;
+
   letter-spacing: -0.03em;
 }
 
+.message-content h1 {
+  font-size: 25px;
+}
+
+.message-content h2 {
+  font-size: 21px;
+}
+
+.message-content h3 {
+  font-size: 18px;
+}
+
+.message-content h4 {
+  font-size: 16px;
+}
+
+.message-content ul,
+.message-content ol {
+  margin: 8px 0;
+
+  padding-left: 24px;
+}
+
+.message-content li {
+  margin: 4px 0;
+}
+
+.message-content blockquote {
+  margin:
+    12px 0;
+
+  padding:
+    8px 14px;
+
+  border-left:
+    3px solid #d1d1cc;
+
+  background: #f0f0ed;
+
+  color: #666660;
+}
+
+.message-content hr {
+  margin:
+    18px 0;
+
+  border: 0;
+
+  border-top:
+    1px solid #e2e2dd;
+}
+
+.message-content a {
+  color: #315eab;
+
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.message-content code {
+  padding:
+    2px 5px;
+
+  border-radius: 5px;
+
+  background: #e7e7e3;
+
+  color: #252522;
+
+  font-family:
+    "Geist Mono",
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+
+  font-size: 0.9em;
+}
+
 .message-content pre {
+  width: 100%;
+
   overflow-x: auto;
 
-  margin: 14px 0;
+  margin:
+    14px 0;
 
-  padding: 16px;
+  padding:
+    16px;
 
   border-radius: 12px;
 
   background: #181817;
 
   color: #f5f5f4;
+
+  scrollbar-width: thin;
+  scrollbar-color:
+    #575752 transparent;
 }
 
-.message-content code {
-  font-family:
-    "Geist Mono",
-    "SFMono-Regular",
-    Consolas,
-    monospace;
+.message-content pre::-webkit-scrollbar {
+  height: 6px;
 }
 
-/* ===============================
-   Composer
-================================ */
+.message-content pre::-webkit-scrollbar-thumb {
+  background: #575752;
+  border-radius: 999px;
+}
+
+.message-content pre code {
+  padding: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  font-size: 13px;
+}
+
+.message-content table {
+  width: 100%;
+
+  margin:
+    16px 0;
+
+  border-collapse: collapse;
+
+  overflow: hidden;
+
+  border:
+    1px solid #deded9;
+}
+
+.message-content th,
+.message-content td {
+  padding:
+    8px 10px;
+
+  border:
+    1px solid #deded9;
+
+  text-align: left;
+
+  vertical-align: top;
+}
+
+.message-content th {
+  background: #ededeb;
+}
+
+/* =========================================================
+   THINKING STATE
+========================================================= */
+
+.thinking {
+  width: min(850px,
+      100%);
+
+  margin:
+    0 auto 20px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  color: #96968f;
+
+  font-size: 13px;
+}
+
+.thinking-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #6d6d67;
+
+  animation:
+    thinking-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes thinking-pulse {
+
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================================================
+   COMPOSER AREA
+========================================================= */
 
 .composer-area {
   position: sticky;
 
   bottom: 0;
 
+  z-index: 15;
+
   width: min(850px,
       calc(100% - 40px));
 
   margin:
-    -120px auto 0;
+    -125px auto 0;
 
-  padding-top: 90px;
+  padding-top: 95px;
 
   background:
     linear-gradient(to bottom,
-      transparent,
-      #f7f7f5 28%);
+      rgba(247, 247, 245, 0),
+      rgba(247, 247, 245, 0.85) 30%,
+      #f7f7f5 60%);
+
+  pointer-events: none;
+}
+
+.composer-area>* {
+  pointer-events: auto;
 }
 
 .composer-centered {
-  margin-top: -155px;
-  padding-top: 90px;
+  margin-top: -150px;
 }
+
+/* =========================================================
+   COMPOSER TOOL BAR
+========================================================= */
 
 .composer-tools {
   display: flex;
+  align-items: center;
 
   gap: 8px;
 
   margin-bottom: 8px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+.composer-tools::-webkit-scrollbar {
+  display: none;
 }
 
 .tool-pill {
-  display: flex;
+  flex-shrink: 0;
+
+  display: inline-flex;
   align-items: center;
 
   gap: 6px;
 
-  padding: 6px 10px;
+  padding:
+    6px 10px;
 
-  border: 1px solid #ddddda;
+  border:
+    1px solid #ddddda;
 
   border-radius: 999px;
 
-  background: rgba(255,
-      255,
-      255,
-      0.8);
+  background:
+    rgba(255, 255, 255, 0.82);
 
   color: #666660;
 
   font-size: 12px;
 
   cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .tool-pill:hover {
-  background: white;
+  background: #fff;
+  border-color: #cfcfca;
 }
 
 .chevron {
   color: #999;
 }
+
+/* =========================================================
+   MODEL SELECTOR
+========================================================= */
+
+.model-selector {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+.model-selector select {
+  appearance: none;
+
+  min-width: 150px;
+
+  padding:
+    7px 30px 7px 12px;
+
+  border:
+    1px solid #ddddda;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, 0.85);
+
+  color: #444440;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  outline: none;
+}
+
+.model-selector select:hover {
+  background: #fff;
+  border-color: #cacac5;
+}
+
+.model-description {
+  position: absolute;
+
+  display: none;
+
+  left: 0;
+  top: calc(100% + 6px);
+
+  max-width: 240px;
+
+  padding:
+    7px 10px;
+
+  border-radius: 8px;
+
+  background: #20201e;
+
+  color: #fff;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+  white-space: nowrap;
+
+  z-index: 50;
+}
+
+.model-selector:hover .model-description {
+  display: block;
+}
+
+/* =========================================================
+   COMPOSER
+========================================================= */
 
 .composer {
   min-height: 70px;
@@ -617,16 +1135,16 @@ textarea {
 
   gap: 10px;
 
-  padding: 14px 14px 14px 18px;
+  padding:
+    14px 14px 14px 18px;
 
-  border: 1px solid #dcdcd7;
+  border:
+    1px solid #dcdcd7;
 
   border-radius: 19px;
 
-  background: rgba(255,
-      255,
-      255,
-      0.94);
+  background:
+    rgba(255, 255, 255, 0.96);
 
   box-shadow:
     0 16px 45px rgba(0, 0, 0, 0.08);
@@ -635,13 +1153,16 @@ textarea {
 .composer textarea {
   flex: 1;
 
+  min-width: 0;
+
   min-height: 35px;
   max-height: 160px;
 
   resize: none;
 
   border: 0;
-  outline: 0;
+
+  outline: none;
 
   background: transparent;
 
@@ -664,15 +1185,32 @@ textarea {
 
   flex-shrink: 0;
 
+  padding: 0;
+
   border: 0;
+
   border-radius: 12px;
 
   background: #171716;
-  color: white;
+
+  color: #fff;
 
   font-size: 20px;
 
   cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.send-button:hover:not(:disabled) {
+  background: #2a2a28;
+  transform: translateY(-1px);
+}
+
+.send-button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .send-button:disabled {
@@ -682,7 +1220,8 @@ textarea {
 }
 
 .composer-footer {
-  padding: 9px 4px;
+  padding:
+    9px 4px;
 
   text-align: center;
 
@@ -691,58 +1230,433 @@ textarea {
   font-size: 10px;
 }
 
-.thinking {
-  width: min(850px,
-      100%);
+/* =========================================================
+   LARGE DESKTOP
+========================================================= */
 
-  margin: 0 auto 20px;
+@media (min-width: 1400px) {
+  .sidebar {
+    width: 290px;
+  }
 
-  color: #96968f;
+  .main-panel {
+    width: calc(100% - 290px);
+    margin-left: 290px;
+  }
 
-  font-size: 13px;
+  .messages-container {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  .composer-area {
+    width: min(900px,
+        calc(100% - 80px));
+  }
 }
 
-/* ===============================
-   Responsive
-================================ */
+/* =========================================================
+   LAPTOP
+========================================================= */
+
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .main-panel {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+  }
+
+  .messages-container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .welcome-screen h1 {
+    font-size: 46px;
+  }
+
+  .composer-area {
+    width: min(820px,
+        calc(100% - 40px));
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
 
 @media (max-width: 900px) {
   .sidebar {
     width: 230px;
-    min-width: 230px;
+  }
+
+  .main-panel {
+    width: calc(100% - 230px);
+    margin-left: 230px;
+  }
+
+  .welcome-screen {
+    margin-top: 6vh;
+  }
+
+  .welcome-screen h1 {
+    font-size: 40px;
+  }
+
+  .welcome-screen p {
+    font-size: 14px;
   }
 
   .suggestions {
     grid-template-columns: 1fr;
+
+    max-width: 500px;
+  }
+
+  .message-bubble {
+    max-width: 85%;
+  }
+
+  .composer-area {
+    width: calc(100% - 32px);
   }
 }
 
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media (max-width: 700px) {
+  .app-shell {
+    position: relative;
+
+    overflow: hidden;
+  }
+
+  /* Sidebar becomes overlay */
   .sidebar {
-    display: none;
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: min(285px, 82vw);
+    min-width: 0;
+
+    height: 100vh;
+    height: 100dvh;
+
+    box-shadow:
+      15px 0 40px rgba(0, 0, 0, 0.14);
+  }
+
+  .sidebar-backdrop {
+    display: block;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 999;
+
+    background:
+      rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .main-panel {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+
+    margin-left: 0;
+  }
+
+  .topbar {
+    height: 58px;
+
+    padding:
+      0 12px;
   }
 
   .mobile-menu {
     display: flex;
   }
 
+  .brand {
+    font-size: 14px;
+  }
+
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+
+    font-size: 9px;
+  }
+
+  .topbar-actions {
+    gap: 4px;
+  }
+
+  .icon-button,
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
   .messages-container {
-    padding: 20px 16px 140px;
-  }
-
-  .composer-area {
-    width: calc(100% - 20px);
-  }
-
-  .message-bubble {
-    max-width: 90%;
+    padding:
+      18px 14px 150px;
   }
 
   .welcome-screen {
-    margin-top: 8vh;
+    width: 100%;
+
+    margin-top: 7vh;
+  }
+
+  .welcome-symbol {
+    width: 46px;
+    height: 46px;
+
+    margin-bottom: 18px;
+
+    border-radius: 14px;
+
+    font-size: 9px;
   }
 
   .welcome-screen h1 {
-    font-size: 38px;
+    font-size: 34px;
+    line-height: 1.08;
+  }
+
+  .welcome-screen p {
+    max-width: 300px;
+
+    margin:
+      16px auto 24px;
+
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .suggestions {
+    width: 100%;
+
+    grid-template-columns: 1fr;
+
+    gap: 8px;
+  }
+
+  .suggestions button {
+    padding: 12px;
+
+    font-size: 13px;
+  }
+
+  .message-row {
+    width: 100%;
+
+    margin-bottom: 18px;
+  }
+
+  .message-bubble {
+    max-width: 92%;
+  }
+
+  .user-message {
+    padding:
+      10px 13px;
+  }
+
+  .assistant-message {
+    padding:
+      2px 0;
+  }
+
+  .message-content {
+    font-size: 14px;
+
+    line-height: 1.6;
+  }
+
+  .message-content pre {
+    max-width: 100%;
+
+    padding: 12px;
+
+    border-radius: 10px;
+  }
+
+  .message-content table {
+    display: block;
+
+    overflow-x: auto;
+
+    white-space: nowrap;
+  }
+
+  .composer-area,
+  .composer-centered {
+    width: calc(100% - 16px);
+
+    margin:
+      -130px auto 0;
+
+    padding-top: 70px;
+  }
+
+  .composer-tools {
+    padding-bottom: 4px;
+  }
+
+  .tool-pill {
+    flex-shrink: 0;
+
+    padding:
+      5px 8px;
+
+    font-size: 11px;
+  }
+
+  .model-selector select {
+    min-width: 130px;
+
+    padding:
+      7px 25px 7px 10px;
+
+    font-size: 11px;
+  }
+
+  .composer {
+    min-height: 58px;
+
+    padding:
+      10px 10px 10px 13px;
+
+    border-radius: 16px;
+  }
+
+  .composer textarea {
+    font-size: 14px;
+  }
+
+  .send-button {
+    width: 36px;
+    height: 36px;
+
+    border-radius: 10px;
+  }
+
+  .composer-footer {
+    padding-top: 8px;
+
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 420px) {
+  .sidebar {
+    width: 280px;
+  }
+
+  .topbar {
+    padding:
+      0 9px;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand span {
+    max-width: 125px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .messages-container {
+    padding:
+      16px 10px 145px;
+  }
+
+  .welcome-screen {
+    margin-top: 6vh;
+  }
+
+  .welcome-screen h1 {
+    font-size: 29px;
+  }
+
+  .welcome-screen p {
+    font-size: 12px;
+  }
+
+  .suggestions button {
+    padding: 11px;
+
+    font-size: 12px;
+  }
+
+  .message-bubble {
+    max-width: 95%;
+  }
+
+  .message-content {
+    font-size: 13px;
+  }
+
+  .composer-area,
+  .composer-centered {
+    width: calc(100% - 10px);
+  }
+
+  .composer {
+    border-radius: 14px;
+  }
+
+  .composer textarea {
+    font-size: 13px;
+  }
+
+  .tool-pill {
+    padding:
+      5px 7px;
+
+    font-size: 10px;
+  }
+
+  .model-selector select {
+    min-width: 120px;
+
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
   }
 }

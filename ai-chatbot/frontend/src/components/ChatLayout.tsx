@@ -12,7 +12,10 @@ export default function ChatLayout() {
     useState<Conversation[]>([]);
 
   const [activeConversationId, setActiveConversationId] =
-    useState<string | undefined>();
+    useState<string | undefined>(undefined);
+
+  // Forces ChatWindow to completely reset
+  const [chatInstance, setChatInstance] = useState(0);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -33,7 +36,15 @@ export default function ChatLayout() {
   }, []);
 
   function handleNewChat() {
+    // Clear selected conversation
     setActiveConversationId(undefined);
+
+    // Force a completely fresh ChatWindow
+    setChatInstance((value) => value + 1);
+  }
+
+  function handleSelectConversation(id: string) {
+    setActiveConversationId(id);
   }
 
   function handleConversationCreated(id: string) {
@@ -51,10 +62,8 @@ export default function ChatLayout() {
       {sidebarOpen && (
         <ChatSidebar
           conversations={conversations}
-          activeConversationId={
-            activeConversationId
-          }
-          onSelect={setActiveConversationId}
+          activeConversationId={activeConversationId}
+          onSelect={handleSelectConversation}
           onNewChat={handleNewChat}
         />
       )}
@@ -64,6 +73,7 @@ export default function ChatLayout() {
         <header className="topbar">
 
           <button
+            type="button"
             className="icon-button mobile-menu"
             onClick={() =>
               setSidebarOpen((value) => !value)
@@ -73,22 +83,33 @@ export default function ChatLayout() {
           </button>
 
           <div className="brand">
-            <div className="brand-mark">✦</div>
-            <span>Black & White</span>
+            <div className="brand-mark">
+              B & W
+            </div>
+
+            <span>Black &amp; White</span>
           </div>
 
           <div className="topbar-actions">
-            <button className="icon-button">
+            <button
+              type="button"
+              className="icon-button"
+            >
               ?
             </button>
 
-            <button className="avatar">
+            <button
+              type="button"
+              className="avatar"
+            >
               A
             </button>
           </div>
+
         </header>
 
         <ChatWindow
+          key={`${chatInstance}-${activeConversationId ?? "new"}`}
           conversationId={activeConversationId}
           onConversationCreated={
             handleConversationCreated
