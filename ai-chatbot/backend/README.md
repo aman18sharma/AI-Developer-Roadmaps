@@ -1,4 +1,4 @@
-# BacBlack & White — Backend
+# Black & White — Backend
 
 FastAPI backend for the Black & White chatbot.
 
