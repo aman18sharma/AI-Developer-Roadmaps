@@ -1,24 +1,16 @@
+"""FastAPI application factory: registers routers, middleware, and exception handlers."""
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from core.exceptions import AppException
 
-from api.chat import router as chat_router
-from api.conversations import (
-    router as conversations_router,
-)
 from api.auth import router as auth_router
-
-from db.database import Base, engine
+from api.chat import router as chat_router
+from api.conversations import router as conversations_router
+from core.exceptions import AppException
 from core.logging_config import configure_logging
-
-# Import models so SQLAlchemy knows about them
-from models.conversation import Conversation
-from models.message import Message
-
-from db.database import Base
-
-import models
+from db.database import Base, engine
+import models  # noqa: F401 – registers all ORM models with SQLAlchemy metadata
 
 Base.metadata.create_all(bind=engine)
 configure_logging()
@@ -48,15 +40,18 @@ app.include_router(auth_router)
 
 @app.get("/health")
 def health_check():
+    """Return service health status."""
     return {
         "status": "healthy",
     }
 
+
 @app.exception_handler(AppException)
 async def app_exception_handler(
-    request: Request,
+    request: Request,  # pylint: disable=unused-argument
     exc: AppException,
 ):
+    """Convert AppException instances to structured JSON error responses."""
     return JSONResponse(
         status_code=exc.status_code,
         content={

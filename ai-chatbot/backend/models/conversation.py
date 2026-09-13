@@ -1,13 +1,17 @@
+"""ORM model for the Conversation table."""
+
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, ForeignKey
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db.database import Base
 from db.constants import SCHEMA
+from db.database import Base
 
 
 class Conversation(Base):
+    """Represents a chat conversation belonging to a user."""
+
     __tablename__ = "conversations"
     __table_args__ = {"schema": SCHEMA}
 
@@ -33,13 +37,6 @@ class Conversation(Base):
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
         nullable=False,
-    )
-
-    messages = relationship(
-        "Message",
-        back_populates="conversation",
-        cascade="all, delete-orphan",
-        order_by="Message.created_at",
     )
 
     user_id: Mapped[int] = mapped_column(

@@ -1,16 +1,16 @@
+"""Conversations API routes for listing and retrieving conversations."""
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from api.dependencies import get_current_user
 from db.database import get_db
 from models.user import User
-
 from schemas.conversation import (
     ConversationDetail,
     ConversationSummary,
     MessageResponse,
 )
-
 from services.conversation_service import (
     get_conversation,
     get_conversations,
@@ -31,6 +31,7 @@ def list_conversations(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
+    """Return all conversations belonging to the authenticated user."""
     conversations = get_conversations(
         db=db,
         user=user,
@@ -57,6 +58,7 @@ def get_conversation_details(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
+    """Return a single conversation with its messages."""
     conversation = get_conversation(
         db=db,
         conversation_id=conversation_id,

@@ -1,3 +1,5 @@
+"""ORM model registry — importing here ensures all tables are registered with SQLAlchemy."""
+
 from models.user import User
 from models.conversation import Conversation
 from models.message import Message

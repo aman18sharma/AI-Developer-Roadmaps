@@ -1,9 +1,14 @@
+"""Service layer for interacting with the OpenAI-compatible LLM API."""
+
 from openai import OpenAI
 
 from app.config import settings
 
 
-client = OpenAI(api_key=settings.xkiro_openai_api_key, base_url=settings.xkiro_base_url)
+client = OpenAI(
+    api_key=settings.xkiro_openai_api_key,
+    base_url=settings.xkiro_base_url,
+)
 
 
 SYSTEM_PROMPT = """
@@ -18,7 +23,7 @@ Rules:
 
 
 def generate_response(messages: list[dict]) -> str:
-
+    """Send the conversation history to the LLM and return the assistant reply."""
     response = client.chat.completions.create(
         model=settings.xkiro_model_name,
         messages=[

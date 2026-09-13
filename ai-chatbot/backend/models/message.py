@@ -1,13 +1,17 @@
+"""ORM model for the Message table."""
+
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db.database import Base
 from db.constants import SCHEMA
+from db.database import Base
 
 
 class Message(Base):
+    """Represents a single message within a conversation."""
+
     __tablename__ = "messages"
     __table_args__ = {"schema": SCHEMA}
 

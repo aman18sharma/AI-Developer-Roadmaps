@@ -1,13 +1,15 @@
+"""Alembic environment configuration for running database migrations."""
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from alembic import context
+from alembic import context  # pylint: disable=no-name-in-module
 from db.database import Base
-from models.user import User
-from models.conversation import Conversation
-from models.message import Message
+from models.user import User  # noqa: F401 – ensures table is registered
+from models.conversation import Conversation  # noqa: F401 – ensures table is registered
+from models.message import Message  # noqa: F401 – ensures table is registered
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -1,3 +1,5 @@
+"""Chat API route for sending messages."""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -23,6 +25,7 @@ def send_message(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
+    """Send a message and receive an AI response."""
     conversation_id, response = chat(
         db=db,
         user=user,

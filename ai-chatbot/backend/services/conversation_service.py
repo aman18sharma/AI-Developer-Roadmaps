@@ -1,21 +1,23 @@
+"""Service layer for conversation and message persistence."""
+
 from uuid import uuid4
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from db.constants import DEFAULT_MODEL_NAME
 from models.conversation import Conversation
 from models.message import Message
 from models.user import User
-from db.constants import DEFAULT_MODEL_NAME
 
 
 def create_conversation(
     db: Session,
     user: User,
     title: str,
-    model: str = DEFAULT_MODEL_NAME
+    model: str = DEFAULT_MODEL_NAME,
 ) -> Conversation:
-
+    """Create and persist a new conversation for the given user."""
     conversation = Conversation(
         id=str(uuid4()),
         user_id=user.id,
@@ -34,7 +36,7 @@ def get_conversations(
     db: Session,
     user: User,
 ) -> list[Conversation]:
-
+    """Return all conversations for a user, ordered by most recently updated."""
     statement = (
         select(Conversation)
         .where(
@@ -53,9 +55,9 @@ def get_conversations(
 def get_conversation(
     db: Session,
     conversation_id: str,
-    user
+    user: User,
 ) -> Conversation | None:
-
+    """Return a single conversation by ID if it belongs to the user, else None."""
     statement = (
         select(Conversation)
         .where(
@@ -73,7 +75,7 @@ def add_message(
     role: str,
     content: str,
 ) -> Message:
-
+    """Append a message to a conversation and stage it for commit."""
     message = Message(
         conversation_id=conversation.id,
         role=role,
@@ -88,7 +90,7 @@ def add_message(
 def generate_title(
     message: str,
 ) -> str:
-
+    """Derive a short conversation title from the first user message."""
     title = " ".join(
         message.strip().split()
     )

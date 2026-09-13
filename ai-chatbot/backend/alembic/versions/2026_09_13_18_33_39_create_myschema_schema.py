@@ -5,10 +5,10 @@ Revises: 3c3f2cfbf10f
 Create Date: 2026-09-13 18:53:39.880515
 
 """
+# pylint: disable=invalid-name
 from typing import Sequence, Union
 
-from alembic import op
-import sqlalchemy as sa
+from alembic import op  # pylint: disable=no-name-in-module
 
 
 # revision identifiers, used by Alembic.
@@ -18,7 +18,8 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-def upgrade():
+def upgrade() -> None:
+    """Create black_and_white schema and grant privileges."""
     op.execute("CREATE SCHEMA IF NOT EXISTS black_and_white")
 
     # Grant usage + create on the schema to a role/user
@@ -39,5 +40,6 @@ def upgrade():
     )
 
 
-def downgrade():
+def downgrade() -> None:
+    """Drop black_and_white schema."""
     op.execute("DROP SCHEMA IF EXISTS black_and_white CASCADE")

@@ -1,3 +1,5 @@
+"""Authentication API routes for register, login, and current user."""
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -6,11 +8,11 @@ from fastapi import (
 )
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from models.user import User
 
 from api.dependencies import get_current_user
 from core.security import create_access_token
 from db.database import get_db
+from models.user import User
 from schemas.auth import (
     RegisterRequest,
     TokenResponse,
@@ -38,6 +40,7 @@ def register(
     request: RegisterRequest,
     db: Session = Depends(get_db),
 ):
+    """Register a new user account."""
     existing_user = get_user_by_email(
         db,
         request.email,
@@ -71,6 +74,7 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
+    """Authenticate a user and return an access token."""
     user = authenticate_user(
         db=db,
         email=form_data.username,
@@ -89,14 +93,15 @@ def login(
         ),
     )
 
-@router.get(
-"/me",
-response_model=UserResponse,
-)
 
+@router.get(
+    "/me",
+    response_model=UserResponse,
+)
 def get_me(
     user: User = Depends(get_current_user),
 ):
+    """Return the currently authenticated user."""
     return UserResponse(
         id=user.id,
         name=user.name,

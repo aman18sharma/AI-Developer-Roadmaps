@@ -1,7 +1,11 @@
+"""Application configuration loaded from environment variables."""
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """Pydantic settings model for application configuration."""
+
     xkiro_openai_api_key: str
     xkiro_model_name: str
     xkiro_base_url: str

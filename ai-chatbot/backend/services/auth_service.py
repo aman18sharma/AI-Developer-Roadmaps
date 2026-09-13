@@ -1,17 +1,17 @@
+"""Service layer for user authentication and account management."""
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from core.security import hash_password, verify_password
 from models.user import User
-from core.security import (
-    hash_password,
-    verify_password,
-)
 
 
 def get_user_by_email(
     db: Session,
     email: str,
 ):
+    """Return the user with the given email address, or None if not found."""
     return db.scalar(
         select(User).where(
             User.email == email.lower()
@@ -25,6 +25,7 @@ def create_user(
     name: str,
     password: str,
 ):
+    """Create, persist, and return a new user account."""
     user = User(
         email=email.lower(),
         name=name.strip(),
@@ -43,6 +44,7 @@ def authenticate_user(
     email: str,
     password: str,
 ):
+    """Verify credentials and return the user, or None if invalid."""
     user = get_user_by_email(
         db,
         email,

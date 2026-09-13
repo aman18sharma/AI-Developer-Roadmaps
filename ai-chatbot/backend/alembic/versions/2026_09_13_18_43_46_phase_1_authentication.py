@@ -5,9 +5,10 @@ Revises:
 Create Date: 2026-09-13 18:43:46.242201
 
 """
+# pylint: disable=invalid-name
 from typing import Sequence, Union
 
-from alembic import op
+from alembic import op  # pylint: disable=no-name-in-module
 import sqlalchemy as sa
 
 

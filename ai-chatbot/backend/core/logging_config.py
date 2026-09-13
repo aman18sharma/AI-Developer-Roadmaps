@@ -1,8 +1,11 @@
+"""Logging configuration for the application."""
+
 import logging
 import sys
 
 
-def configure_logging():
+def configure_logging() -> None:
+    """Configure root logger to write structured records to stdout."""
     logging.basicConfig(
         level=logging.INFO,
         format=(

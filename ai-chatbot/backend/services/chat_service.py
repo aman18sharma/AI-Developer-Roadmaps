@@ -1,17 +1,17 @@
+"""Service layer orchestrating the chat flow between user, DB, and LLM."""
+
 from sqlalchemy.orm import Session
 
+from db.constants import DEFAULT_MODEL_NAME
 from models.conversation import Conversation
 from models.user import User
-
 from services.conversation_service import (
     add_message,
     create_conversation,
     generate_title,
     get_conversation,
 )
-
 from services.llm_service import generate_response
-from db.constants import DEFAULT_MODEL_NAME
 
 
 def chat(
@@ -21,7 +21,7 @@ def chat(
     conversation_id: str | None,
     model: str,
 ):
-
+    """Process a user message, persist it, call the LLM, and return the reply."""
     conversation: Conversation | None = None
 
     # Load the conversation only if it belongs to
@@ -31,7 +31,6 @@ def chat(
             db=db,
             conversation_id=conversation_id,
             user=user,
-            model=DEFAULT_MODEL_NAME
         )
 
         if conversation is None:

@@ -1,3 +1,5 @@
+"""FastAPI dependency providers for authentication and database sessions."""
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -16,13 +18,14 @@ def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
 ):
+    """Validate the bearer token and return the authenticated user."""
     try:
         user_id = decode_access_token(token)
-    except Exception:
+    except Exception as exc:
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired token",
-        )
+        ) from exc
 
     user = db.get(User, user_id)
 

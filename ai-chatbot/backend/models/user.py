@@ -1,12 +1,17 @@
+"""ORM model for the User table."""
+
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, String, ForeignKey
+from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db.database import Base
 from db.constants import SCHEMA
+from db.database import Base
+
 
 class User(Base):
+    """Represents a registered user account."""
+
     __tablename__ = "users"
     __table_args__ = {"schema": SCHEMA}
 
@@ -42,12 +47,6 @@ class User(Base):
         DateTime,
         default=datetime.utcnow,
         nullable=False,
-    )
-
-    conversations = relationship(
-        "Conversation",
-        back_populates="user",
-        cascade="all, delete-orphan",
     )
 
     conversations = relationship(

@@ -1,9 +1,13 @@
+"""Pydantic schemas for conversation and message responses."""
+
 from datetime import datetime
 
 from pydantic import BaseModel
 
 
 class ConversationSummary(BaseModel):
+    """Lightweight conversation representation used in list responses."""
+
     id: str
     title: str
     created_at: datetime
@@ -11,6 +15,8 @@ class ConversationSummary(BaseModel):
 
 
 class MessageResponse(BaseModel):
+    """Representation of a single message within a conversation."""
+
     id: int
     role: str
     content: str
@@ -18,6 +24,8 @@ class MessageResponse(BaseModel):
 
 
 class ConversationDetail(BaseModel):
+    """Full conversation representation including all messages."""
+
     id: str
     title: str
     created_at: datetime
