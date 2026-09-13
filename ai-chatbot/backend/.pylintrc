@@ -1,0 +1,46 @@
+[MAIN]
+# Use multiple processes to speed up Pylint.
+jobs=1
+
+# Files or directories to ignore when running pylint.
+ignore=.venv,alembic
+
+# Pickle collected data for later comparisons.
+persistent=yes
+
+[MESSAGES CONTROL]
+# Disable messages that are not relevant for this project.
+disable=
+    # E0401: import-error — third-party packages (fastapi, sqlalchemy, etc.)
+    #   are not installed in the pylint environment on CI.
+    import-error,
+
+    # E0611: no-name-in-module — alembic.context / alembic.op are runtime-injected.
+    no-name-in-module,
+
+    # R0903: too-few-public-methods — Pydantic models and SQLAlchemy models
+    #   are intentionally data-only classes.
+    too-few-public-methods,
+
+    # R0801: duplicate-code — shared column patterns across models are acceptable.
+    duplicate-code,
+
+    # W0613: unused-argument — FastAPI exception handlers require the `request`
+    #   parameter by signature even when unused.
+    unused-argument
+
+[FORMAT]
+# Maximum number of characters on a single line.
+max-line-length=100
+
+[BASIC]
+# Good variable names that don't need to follow the naming convention.
+good-names=db,id,i,j,k,e,ex
+
+[DESIGN]
+# Maximum number of arguments for function / method.
+max-args=8
+
+[SIMILARITIES]
+# Minimum lines number of a similarity.
+min-similarity-lines=10
