@@ -5,3 +5,9 @@ pydantic-settings>=2
 python-dotenv
 openai
 sqlalchemy>=2.0.31
+psycopg2-binary
+alembic
+pyjwt
+pwdlib[argon2]
+python-multipart
+email-validator

@@ -5,16 +5,22 @@ from sqlalchemy.orm import Session
 
 from models.conversation import Conversation
 from models.message import Message
+from models.user import User
+from db.constants import DEFAULT_MODEL_NAME
 
 
 def create_conversation(
     db: Session,
-    title: str = "New Chat",
+    user: User,
+    title: str,
+    model: str = DEFAULT_MODEL_NAME
 ) -> Conversation:
 
     conversation = Conversation(
         id=str(uuid4()),
+        user_id=user.id,
         title=title,
+        model=model,
     )
 
     db.add(conversation)
@@ -26,25 +32,39 @@ def create_conversation(
 
 def get_conversations(
     db: Session,
+    user: User,
 ) -> list[Conversation]:
 
     statement = (
         select(Conversation)
-        .order_by(Conversation.updated_at.desc())
+        .where(
+            Conversation.user_id == user.id
+        )
+        .order_by(
+            Conversation.updated_at.desc()
+        )
     )
 
-    return list(db.scalars(statement).all())
+    return list(
+        db.scalars(statement).all()
+    )
 
 
 def get_conversation(
     db: Session,
     conversation_id: str,
+    user
 ) -> Conversation | None:
 
-    return db.get(
-        Conversation,
-        conversation_id,
+    statement = (
+        select(Conversation)
+        .where(
+            Conversation.id == conversation_id,
+            Conversation.user_id == user.id,
+        )
     )
+
+    return db.scalar(statement)
 
 
 def add_message(
@@ -65,8 +85,13 @@ def add_message(
     return message
 
 
-def generate_title(message: str) -> str:
-    title = " ".join(message.strip().split())
+def generate_title(
+    message: str,
+) -> str:
+
+    title = " ".join(
+        message.strip().split()
+    )
 
     if len(title) > 50:
         return f"{title[:47]}..."

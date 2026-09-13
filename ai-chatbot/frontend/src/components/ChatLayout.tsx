@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 import ChatSidebar from "./ChatSidebar";
 import ChatWindow from "./ChatWindow";
 
-import { getConversations } from "../services/api";
+import { getConversations, getCurrentUser } from "../services/api";
 
 import type { Conversation } from "../types/chat";
+import UserMenu from "./UserMenu";
 
 export default function ChatLayout() {
   const [conversations, setConversations] =
     useState<Conversation[]>([]);
+
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   const [activeConversationId, setActiveConversationId] =
     useState<string | undefined>(undefined);
@@ -33,6 +36,22 @@ export default function ChatLayout() {
 
   useEffect(() => {
     void loadConversations();
+  }, []);
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+      } catch (error) {
+        console.error(
+          "Failed to load current user",
+          error
+        );
+      }
+    }
+
+    void loadUser();
   }, []);
 
   function handleNewChat() {
@@ -91,19 +110,9 @@ export default function ChatLayout() {
           </div>
 
           <div className="topbar-actions">
-            <button
-              type="button"
-              className="icon-button"
-            >
-              ?
-            </button>
-
-            <button
-              type="button"
-              className="avatar"
-            >
-              A
-            </button>
+            {currentUser ? (
+              <UserMenu user={currentUser} />
+            ) : '?'}
           </div>
 
         </header>

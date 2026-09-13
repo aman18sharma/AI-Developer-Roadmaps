@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from api.dependencies import get_current_user
 from db.database import get_db
+from models.user import User
+
 from schemas.conversation import (
     ConversationDetail,
     ConversationSummary,
     MessageResponse,
 )
+
 from services.conversation_service import (
     get_conversation,
     get_conversations,
@@ -25,14 +29,18 @@ router = APIRouter(
 )
 def list_conversations(
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
-
-    conversations = get_conversations(db)
+    conversations = get_conversations(
+        db=db,
+        user=user,
+    )
 
     return [
         ConversationSummary(
             id=item.id,
             title=item.title,
+            model=item.model,
             created_at=item.created_at,
             updated_at=item.updated_at,
         )
@@ -47,11 +55,12 @@ def list_conversations(
 def get_conversation_details(
     conversation_id: str,
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
-
     conversation = get_conversation(
-        db,
-        conversation_id,
+        db=db,
+        conversation_id=conversation_id,
+        user=user,
     )
 
     if conversation is None:
@@ -63,6 +72,7 @@ def get_conversation_details(
     return ConversationDetail(
         id=conversation.id,
         title=conversation.title,
+        model=conversation.model,
         created_at=conversation.created_at,
         updated_at=conversation.updated_at,
         messages=[

@@ -345,7 +345,7 @@ The interface follows a modern AI workspace pattern:
 
 ```text
 ┌─────────────────────────────────────────┐
-│ B & W                         Profile   │
+│     B & W                  Profile      │
 ├──────────────┬──────────────────────────┤
 │ + New Chat   │                          │
 │              │       AI Assistant       │

@@ -4,10 +4,12 @@ from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
+from db.constants import SCHEMA
 
 
 class Message(Base):
     __tablename__ = "messages"
+    __table_args__ = {"schema": SCHEMA}
 
     id: Mapped[int] = mapped_column(
         primary_key=True,
@@ -16,7 +18,7 @@ class Message(Base):
 
     conversation_id: Mapped[str] = mapped_column(
         String(100),
-        ForeignKey("conversations.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCHEMA}.conversations.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )

@@ -315,8 +315,7 @@ The selected model is passed dynamically:
 
 ```python
 generate_response(
-    messages=history,
-    model=model,
+    messages=history
 )
 ```
 

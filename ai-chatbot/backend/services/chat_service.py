@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models.conversation import Conversation
+from models.user import User
 
 from services.conversation_service import (
     add_message,
@@ -10,40 +11,58 @@ from services.conversation_service import (
 )
 
 from services.llm_service import generate_response
+from db.constants import DEFAULT_MODEL_NAME
 
 
 def chat(
     db: Session,
+    user: User,
     message: str,
     conversation_id: str | None,
+    model: str,
 ):
 
     conversation: Conversation | None = None
 
+    # Load the conversation only if it belongs to
+    # the currently authenticated user.
     if conversation_id:
         conversation = get_conversation(
-            db,
-            conversation_id,
+            db=db,
+            conversation_id=conversation_id,
+            user=user,
+            model=DEFAULT_MODEL_NAME
         )
 
-    # Create new conversation if necessary
+        if conversation is None:
+            raise ValueError(
+                "Conversation not found"
+            )
+
+    # Create a new conversation.
     if conversation is None:
         conversation = create_conversation(
-            db,
+            db=db,
+            user=user,
             title=generate_title(message),
+            model=model,
         )
+    else:
+        # Persist the model selected by the user.
+        conversation.model = model
 
-    # Save user message
+    # Save user message.
     add_message(
-        db,
-        conversation,
-        "user",
-        message,
+        db=db,
+        conversation=conversation,
+        role="user",
+        content=message,
     )
 
     db.commit()
+    db.refresh(conversation)
 
-    # Get previous messages
+    # Build LLM history.
     history = [
         {
             "role": item.role,
@@ -52,15 +71,17 @@ def chat(
         for item in conversation.messages
     ]
 
-    # Generate AI response
-    response = generate_response(history)
+    # Generate response using selected model.
+    response = generate_response(
+        messages=history,
+    )
 
-    # Save AI response
+    # Save AI response.
     add_message(
-        db,
-        conversation,
-        "assistant",
-        response,
+        db=db,
+        conversation=conversation,
+        role="assistant",
+        content=response,
     )
 
     db.commit()

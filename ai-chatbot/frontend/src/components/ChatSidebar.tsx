@@ -94,7 +94,7 @@ export default function ChatSidebar({
         </button>
 
         <div className="version">
-          B&W v0.1
+          B & W v0.1
         </div>
       </div>
     </aside>
